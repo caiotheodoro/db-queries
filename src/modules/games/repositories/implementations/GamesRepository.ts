@@ -17,7 +17,7 @@ export class GamesRepository implements IGamesRepository {
       .createQueryBuilder()
       .select()
       .from(Game,'games')
-      .where('games.title ILIKE :param', { param: param})
+      .where('games.title ILIKE :param', { param: `%${param}%`})
       .getMany();
 
       // Complete usando query builder
@@ -30,11 +30,8 @@ export class GamesRepository implements IGamesRepository {
   async findUsersByGameId(id: string): Promise<User[]> {
     return this.repository
       .createQueryBuilder()
-      .select()
-      .from(User,'users')
-      .innerJoin('users.games', 'games')
-      .where('games.id = :id', { id: id})
-      .getMany();
+      .relation(Game, "users")
+      .of(id).loadMany();
       
 
       // Complete usando query builder
